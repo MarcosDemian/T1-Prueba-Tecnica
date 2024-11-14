@@ -1,0 +1,51 @@
+El sector contable trabaja habitualmente con reportes de Estados Unidos. 
+Requiere listar las tareas entregadas por los usuarios que superen el 
+monto promedio de ese recurso y cuya orden de trabajo sea del mes y año dados.
+
+La lista deberá tener por columnas:
+
+- Nombre completo de recurso / resorce = firstname & lastname X
+- Nro de proyecto / = work_order = project_id
+- Fecha de la orden de trabajo / = work_order = created X
+- Nro de tarea / task = id 
+- Precio unitario de la tarea / task_count = unit_price 
+- Cantidad / task_count = count
+- Monto / task_count = amount X
+- Nro de orden de trabajo / purchase_order = work_order_id X
+
+(verificar si las tareas estan entregadas, no se)
+obtener monto= task/resource_id_assigned
+
+Recurso = resource
+
+Entregado = task_status = 4
+
+Proyecto = work_order = project_id
+
+
+purchase_order = work_order_id & resource_id
+
+
+
+CREATE VIEW list_task_delivered AS
+SELECT users.id, users.username, users.resource_id, resource.firstname, resource.lastname
+FROM db1.resource
+JOIN db2.users ON users.resource_id = resource.id;
+
+
+SELECT r.ID AS resource_ID, AVG(tc.amount) AS average_amount
+FROM Resource r
+JOIN Task t ON r.ID = t.resource_id_assigned  -- Relacionamos la tabla Resource con Task
+JOIN Task_count tc ON t.ID = tc.Task_ID  -- Relacionamos Task con Task_count
+GROUP BY r.ID; (montos)
+
+SELECT t.resource_id_assigned, AVG(tc.amount) AS average_amount
+    FROM Task t
+    JOIN Task_count tc ON t.ID = tc.Task_ID
+    JOIN work_order_item_detail woid ON t.work_order_item_detail_ID = woid.ID
+    JOIN work_order_item woi ON woid.work_order_item_id = woi.ID
+    JOIN work_order wo ON woi.work_order_id = wo.ID
+    WHERE YEAR(wo.created) = 2023 AND MONTH(wo.created) = 08
+    GROUP BY t.resource_id_assigned
+
+2243 8.4792500
